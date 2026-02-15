@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CBT UP PPG</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app fade-in">
+      <header class="topbar">
+        <div>
+          <h1>CBT UP PPG</h1>
+          <p class="subtitle">Latihan profesional berbasis komputer</p>
+        </div>
+        <div id="authBadge" class="badge"></div>
+      </header>
+
+      <main>
+        <section id="landingView" class="card">
+          <h2>Login Peserta</h2>
+          <form id="participantLoginForm" class="form-grid">
+            <label>
+              Nama Peserta
+              <input type="text" id="participantName" required minlength="3" />
+            </label>
+            <label>
+              Kata Sandi
+              <input type="password" id="participantPassword" required minlength="4" />
+            </label>
+            <button type="submit" class="btn btn-primary">Masuk Sebagai Peserta</button>
+          </form>
+          <button id="openAdminLogin" class="btn btn-link">Login Admin</button>
+        </section>
+
+        <section id="participantView" class="hidden">
+          <div class="card">
+            <div class="row-between">
+              <h2>Dashboard Peserta</h2>
+              <button id="participantLogout" class="btn btn-secondary">Keluar</button>
+            </div>
+            <p id="participantGreeting"></p>
+            <div class="action-row">
+              <button id="startExamBtn" class="btn btn-primary">Mulai Ujian</button>
+              <button id="showHistoryBtn" class="btn btn-secondary">Riwayat Ujian</button>
+            </div>
+          </div>
+
+          <div id="examCard" class="card hidden"></div>
+          <div id="historyCard" class="card hidden"></div>
+        </section>
+
+        <section id="adminLoginView" class="card hidden">
+          <div class="row-between">
+            <h2>Login Admin</h2>
+            <button id="backToParticipant" class="btn btn-link">Kembali</button>
+          </div>
+          <form id="adminLoginForm" class="form-grid">
+            <label>
+              Username
+              <input type="text" id="adminUsername" required />
+            </label>
+            <label>
+              Password
+              <input type="password" id="adminPassword" required />
+            </label>
+            <button type="submit" class="btn btn-primary">Masuk Admin</button>
+          </form>
+        </section>
+
+        <section id="adminView" class="hidden">
+          <div class="card">
+            <div class="row-between">
+              <h2>Panel Admin</h2>
+              <button id="adminLogout" class="btn btn-secondary">Keluar</button>
+            </div>
+            <div class="tab-row">
+              <button class="tab-btn active" data-tab="bank">Bank Soal</button>
+              <button class="tab-btn" data-tab="import">Impor Cepat</button>
+              <button class="tab-btn" data-tab="settings">Pengaturan Ujian</button>
+              <button class="tab-btn" data-tab="histories">Riwayat Peserta</button>
+            </div>
+          </div>
+
+          <div id="adminTab-bank" class="card admin-tab"></div>
+          <div id="adminTab-import" class="card admin-tab hidden"></div>
+          <div id="adminTab-settings" class="card admin-tab hidden"></div>
+          <div id="adminTab-histories" class="card admin-tab hidden"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="overlay" class="overlay hidden"></div>
+    <div id="modal" class="modal hidden"></div>
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
