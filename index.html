@@ -1,99 +1,1376 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CBT UP PPG</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div id="app" class="app fade-in">
-      <header class="topbar">
-        <div>
-          <h1>CBT UP PPG</h1>
-          <p class="subtitle">Latihan profesional berbasis komputer</p>
-        </div>
-        <div id="authBadge" class="badge"></div>
-      </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UP PPG - Latihan CBT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f0f7f4;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --accent-primary: #2d8a6e;
+            --accent-secondary: #3da882;
+            --accent-light: #e8f5f0;
+            --accent-lighter: #f5fbf9;
+            --text-primary: #1a3d31;
+            --text-secondary: #4a6a5d;
+            --text-muted: #7a9a8d;
+            --border-color: #d4e8e0;
+            --success: #22c55e;
+            --success-bg: #dcfce7;
+            --success-border: #86efac;
+            --error: #ef4444;
+            --error-bg: #fee2e2;
+            --error-border: #fca5a5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+        }
 
-      <main>
-        <section id="landingView" class="card">
-          <h2>Login Peserta</h2>
-          <form id="participantLoginForm" class="form-grid">
-            <label>
-              Nama Peserta
-              <input type="text" id="participantName" required minlength="3" />
-            </label>
-            <label>
-              Kata Sandi
-              <input type="password" id="participantPassword" required minlength="4" />
-            </label>
-            <button type="submit" class="btn btn-primary">Masuk Sebagai Peserta</button>
-          </form>
-          <button id="openAdminLogin" class="btn btn-link">Login Admin</button>
-        </section>
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            box-sizing: border-box;
+        }
 
-        <section id="participantView" class="hidden">
-          <div class="card">
-            <div class="row-between">
-              <h2>Dashboard Peserta</h2>
-              <button id="participantLogout" class="btn btn-secondary">Keluar</button>
-            </div>
-            <p id="participantGreeting"></p>
-            <div class="action-row">
-              <button id="startExamBtn" class="btn btn-primary">Mulai Ujian</button>
-              <button id="showHistoryBtn" class="btn btn-secondary">Riwayat Ujian</button>
-            </div>
-          </div>
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            margin: 0;
+        }
 
-          <div id="examCard" class="card hidden"></div>
-          <div id="historyCard" class="card hidden"></div>
-        </section>
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(45, 138, 110, 0.05);
+        }
 
-        <section id="adminLoginView" class="card hidden">
-          <div class="row-between">
-            <h2>Login Admin</h2>
-            <button id="backToParticipant" class="btn btn-link">Kembali</button>
-          </div>
-          <form id="adminLoginForm" class="form-grid">
-            <label>
-              Username
-              <input type="text" id="adminUsername" required />
-            </label>
-            <label>
-              Password
-              <input type="password" id="adminPassword" required />
-            </label>
-            <button type="submit" class="btn btn-primary">Masuk Admin</button>
-          </form>
-        </section>
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            border: none;
+            cursor: pointer;
+        }
 
-        <section id="adminView" class="hidden">
-          <div class="card">
-            <div class="row-between">
-              <h2>Panel Admin</h2>
-              <button id="adminLogout" class="btn btn-secondary">Keluar</button>
-            </div>
-            <div class="tab-row">
-              <button class="tab-btn active" data-tab="bank">Bank Soal</button>
-              <button class="tab-btn" data-tab="import">Impor Cepat</button>
-              <button class="tab-btn" data-tab="settings">Pengaturan Ujian</button>
-              <button class="tab-btn" data-tab="histories">Riwayat Peserta</button>
-            </div>
-          </div>
+        .btn-primary:hover { background: var(--accent-secondary); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-          <div id="adminTab-bank" class="card admin-tab"></div>
-          <div id="adminTab-import" class="card admin-tab hidden"></div>
-          <div id="adminTab-settings" class="card admin-tab hidden"></div>
-          <div id="adminTab-histories" class="card admin-tab hidden"></div>
-        </section>
-      </main>
-    </div>
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
 
-    <div id="overlay" class="overlay hidden"></div>
-    <div id="modal" class="modal hidden"></div>
-    <div id="toast" class="toast hidden"></div>
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            background: var(--accent-lighter);
+        }
 
-    <script src="app.js"></script>
-  </body>
+        .btn-finish {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.15s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(45, 138, 110, 0.3);
+        }
+
+        .btn-finish:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(45, 138, 110, 0.4);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            transition: all 0.15s ease;
+            font-size: 14px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(45, 138, 110, 0.1);
+        }
+
+        .question-nav-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            font-size: 14px;
+        }
+
+        .question-nav-item:hover { border-color: var(--accent-primary); background: var(--accent-lighter); }
+        .question-nav-item.answered { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
+        .question-nav-item.doubt { background: var(--warning); color: white; border-color: var(--warning); }
+        .question-nav-item.current { border: 2px solid var(--accent-primary); font-weight: 600; }
+
+        .option-item {
+            padding: 14px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .option-item:hover { border-color: var(--accent-primary); background: var(--accent-lighter); }
+        .option-item.selected { border-color: var(--accent-primary); background: var(--accent-light); }
+        .option-item.correct { border-color: var(--success); background: var(--success-bg); }
+        .option-item.incorrect { border-color: var(--error); background: var(--error-bg); }
+        .option-item.disabled { cursor: default; }
+
+        .option-label { font-weight: 600; min-width: 24px; color: var(--text-secondary); }
+        .option-item.correct .option-label { color: var(--success); }
+        .option-item.incorrect .option-label { color: var(--error); }
+
+        .timer-normal { color: var(--text-primary); }
+        .timer-warning { color: var(--warning); }
+        .timer-danger { color: var(--error); animation: timerPulse 1s infinite; }
+
+        @keyframes timerPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(26, 61, 49, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .badge-success { background: var(--success-bg); color: #166534; }
+        .badge-error { background: var(--error-bg); color: #991b1b; }
+        .badge-warning { background: var(--warning-bg); color: #92400e; }
+        .badge-category { background: var(--accent-light); color: var(--accent-primary); }
+
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 200; }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: 10px;
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast.show { opacity: 1; transform: translateX(0); }
+
+        .result-header {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-item {
+            border-left: 4px solid var(--border-color);
+            transition: border-color 0.2s ease;
+        }
+
+        .review-item.correct { border-left-color: var(--success); }
+        .review-item.incorrect { border-left-color: var(--error); }
+
+        /* Style for Admin Question List Item */
+        .admin-question-item {
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.15s ease;
+        }
+        
+        .admin-question-item:hover {
+            border-color: var(--accent-primary);
+            background: var(--accent-lighter);
+        }
+
+        @media (max-width: 768px) {
+            .question-nav-item { width: 36px; height: 36px; font-size: 13px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen"></div>
+    <div id="modal-container"></div>
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        // ============================================
+        // DATA STORE
+        // ============================================
+        const Store = {
+            keys: {
+                users: 'uppg_users',
+                questions: 'uppg_questions',
+                results: 'uppg_results',
+                settings: 'uppg_settings',
+                currentUser: 'uppg_current_user',
+                questionUsage: 'uppg_question_usage'
+            },
+
+            init() {
+                if (!this.get(this.keys.users)) {
+                    this.set(this.keys.users, [
+                        { id: 'admin', username: 'admin', password: 'admin123', role: 'admin', name: 'Administrator' },
+                        { id: 'peserta1', username: 'peserta', password: 'peserta123', role: 'peserta', name: 'Peserta Demo' }
+                    ]);
+                }
+                if (!this.get(this.keys.questions)) {
+                    this.set(this.keys.questions, this.getDefaultQuestions());
+                }
+                if (!this.get(this.keys.results)) {
+                    this.set(this.keys.results, []);
+                }
+                if (!this.get(this.keys.settings)) {
+                    this.set(this.keys.settings, { defaultDuration: 60, defaultQuestionCount: 20 });
+                }
+                if (!this.get(this.keys.questionUsage)) {
+                    this.set(this.keys.questionUsage, {});
+                }
+            },
+
+            get(key) {
+                try {
+                    const data = localStorage.getItem(key);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) { return null; }
+            },
+
+            set(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) { return false; }
+            },
+
+            getDefaultQuestions() {
+                return [
+                    { id: 'q1', category: 'Pedagogik', question: 'Prinsip pembelajaran yang berpusat pada peserta didik ditandai dengan...', options: { A: 'Guru sebagai satu-satunya sumber belajar', B: 'Peserta didik aktif mengonstruksi pengetahuan', C: 'Pembelajaran satu arah dari guru', D: 'Penilaian hanya di akhir pembelajaran', E: 'Kurikulum kaku tidak bisa diubah' }, correctAnswer: 'B' },
+                    { id: 'q2', category: 'Pedagogik', question: 'Dalam pembelajaran diferensiasi, guru perlu memperhatikan...', options: { A: 'Keseragaman cara mengajar', B: 'Kesiapan belajar, minat, dan profil belajar siswa', C: 'Nilai ulangan sebagai satu-satunya acuan', D: 'Penggunaan buku paket yang sama', E: 'Kecepatan menyampaikan materi' }, correctAnswer: 'B' },
+                    { id: 'q3', category: 'Profesional', question: 'Pengembangan keprofesian berkelanjutan (PKB) bertujuan untuk...', options: { A: 'Meningkatkan penghasilan guru', B: 'Meningkatkan kompetensi dan kualitas pembelajaran', C: 'Mendapatkan promosi jabatan', D: 'Memenuhi administrasi sekolah', E: 'Bersaing dengan guru lain' }, correctAnswer: 'B' },
+                    { id: 'q4', category: 'Profesional', question: 'Guru profesional harus memiliki kompetensi...', options: { A: 'Hanya kompetensi pedagogik', B: 'Pedagogik, profesional, sosial, dan kepribadian', C: 'Hanya kompetensi profesional', D: 'Kompetensi teknis saja', E: 'Kompetensi mengajar saja' }, correctAnswer: 'B' },
+                    { id: 'q5', category: 'Pedagogik', question: 'Metode pembelajaran project based learning bertujuan untuk...', options: { A: 'Menghafal materi pelajaran', B: 'Mengembangkan keterampilan berpikir tingkat tinggi melalui proyek', C: 'Menyelesaikan tugas cepat', D: 'Mengurangi beban guru', E: 'Membuat siswa sibuk' }, correctAnswer: 'B' },
+                    { id: 'q6', category: 'Profesional', question: 'Penilaian autentik memiliki karakteristik...', options: { A: 'Hanya mengukur ingatan', B: 'Mengukur kemampuan nyata dalam konteks riil', C: 'Mengukur kecepatan menjawab', D: 'Hanya menggunakan pilihan ganda', E: 'Dilakukan sekali di akhir semester' }, correctAnswer: 'B' },
+                    { id: 'q7', category: 'Pedagogik', question: 'Kurikulum Merdeka memberikan keleluasaan kepada guru untuk...', options: { A: 'Tidak membuat perangkat pembelajaran', B: 'Mengembangkan modul ajar sesuai konteks peserta didik', C: 'Mengabaikan capaian pembelajaran', D: 'Mengurangi jam mengajar', E: 'Tidak melakukan penilaian' }, correctAnswer: 'B' },
+                    { id: 'q8', category: 'Profesional', question: 'Refleksi pembelajaran sangat penting karena...', options: { A: 'Memenuhi administrasi', B: 'Membantu guru memperbaiki praktik pembelajaran', C: 'Menunjukkan kesibukan guru', D: 'Syarat kenaikan pangkat', E: 'Tradisi sekolah' }, correctAnswer: 'B' },
+                    { id: 'q9', category: 'Pedagogik', question: 'Diferensiasi proses dalam pembelajaran berarti...', options: { A: 'Membedakan waktu belajar', B: 'Menyediakan berbagai cara siswa memahami materi', C: 'Membedakan nilai siswa', D: 'Membedakan guru pengajar', E: 'Membedakan ruang kelas' }, correctAnswer: 'B' },
+                    { id: 'q10', category: 'Profesional', question: 'Komunitas belajar (learning community) penting bagi guru karena...', options: { A: 'Tempat berkumpul', B: 'Sarana berbagi praktik baik dan pengembangan profesional', C: 'Syarat administrasi', D: 'Tempat mengeluh', E: 'Kegiatan sosial semata' }, correctAnswer: 'B' },
+                    { id: 'q11', category: 'Pedagogik', question: 'Asesmen formatif dilakukan untuk...', options: { A: 'Memberi nilai akhir', B: 'Memperoleh umpan balik selama proses pembelajaran', C: 'Menghukum siswa', D: 'Menentukan kelulusan', E: 'Mengisi rapor' }, correctAnswer: 'B' },
+                    { id: 'q12', category: 'Profesional', question: 'Literasi digital guru sangat diperlukan untuk...', options: { A: 'Bermain media sosial', B: 'Memanfaatkan teknologi dalam pembelajaran secara efektif', C: 'Mengurangi beban kerja', D: 'Mengikuti tren', E: 'Hiburan semata' }, correctAnswer: 'B' },
+                    { id: 'q13', category: 'Pedagogik', question: 'Pembelajaran berbasis masalah (problem based learning) mendorong siswa untuk...', options: { A: 'Menghafal solusi', B: 'Menemukan solusi melalui pemecahan masalah', C: 'Menunggu jawaban guru', D: 'Menyalin jawaban teman', E: 'Menghindari kesulitan' }, correctAnswer: 'B' },
+                    { id: 'q14', category: 'Profesional', question: 'Penelitian tindakan kelas (PTK) bermanfaat untuk...', options: { A: 'Syarat promosi', B: 'Memperbaiki praktik pembelajaran di kelas', C: 'Gaya-gayaan', D: 'Mengisi waktu luang', E: 'Persaingan antar guru' }, correctAnswer: 'B' },
+                    { id: 'q15', category: 'Pedagogik', question: 'Dalam pembelajaran abad 21, peran guru lebih sebagai...', options: { A: 'Satu-satunya sumber pengetahuan', B: 'Fasilitator dan pembimbing', C: 'Pemberi hukuman', D: 'Penguasa kelas', E: 'Pemegang kebenaran' }, correctAnswer: 'B' },
+                    { id: 'q16', category: 'Profesional', question: 'Kode etik guru berfungsi untuk...', options: { A: 'Membatasi gerak guru', B: 'Pedoman perilaku profesional guru', C: 'Menakuti-nakuti guru', D: 'Administrasi semata', E: 'Syarat sertifikasi' }, correctAnswer: 'B' },
+                    { id: 'q17', category: 'Pedagogik', question: 'Gaya belajar visual kinestetik auditory adalah konsep yang...', options: { A: 'Sudah ditinggalkan', B: 'Perlu dipahami untuk diferensiasi pembelajaran', C: 'Tidak relevan', D: 'Hanya teori', E: 'Membuat siswa bingung' }, correctAnswer: 'B' },
+                    { id: 'q18', category: 'Profesional', question: 'Guru sebagai peneliti artinya...', options: { A: 'Guru wajib menulis jurnal', B: 'Guru melakukan refleksi dan inovasi pembelajaran secara sistematis', C: 'Guru harus bergelar akademik', D: 'Guru meninggalkan kelas', E: 'Guru fokus meneliti' }, correctAnswer: 'B' },
+                    { id: 'q19', category: 'Pedagogik', question: 'Pembelajaran sosial emosional bertujuan untuk...', options: { A: 'Mengajarkan akademik', B: 'Mengembangkan keterampilan mengelola emosi dan hubungan sosial', C: 'Menghukum siswa', D: 'Mengurangi jam pelajaran', E: 'Menambah tugas guru' }, correctAnswer: 'B' },
+                    { id: 'q20', category: 'Profesional', question: 'Well-being guru penting karena...', options: { A: 'Guru lebih santai', B: 'Guru yang sehat secara jasmani dan rohani akan mengajar lebih efektif', C: 'Mengurangi beban kerja', D: 'Guru bisa libur', E: 'Mendapat bonus' }, correctAnswer: 'B' },
+                    { id: 'q21', category: 'Pedagogik', question: 'Model pembelajaran discovery learning menekankan pada...', options: { A: 'Pemberian informasi langsung', B: 'Penemuan konsep oleh siswa sendiri', C: 'Menghafal definisi', D: 'Ceramah guru', E: 'Pembacaan buku' }, correctAnswer: 'B' },
+                    { id: 'q22', category: 'Profesional', question: 'Mentoring dalam konteks keprofesian guru adalah...', options: { A: 'Pengawasan ketat', B: 'Pembinaan oleh guru berpengalaman kepada guru pemula', C: 'Persaingan', D: 'Cara menilai guru', E: 'Pelatihan massal' }, correctAnswer: 'B' },
+                    { id: 'q23', category: 'Pedagogik', question: 'HOTS (Higher Order Thinking Skills) mencakup kemampuan...', options: { A: 'Mengingat dan menghafal', B: 'Menganalisis, mengevaluasi, dan mencipta', C: 'Menyalin dan menempel', D: 'Membaca dan menulis', E: 'Mendengar dan mencatat' }, correctAnswer: 'B' },
+                    { id: 'q24', category: 'Profesional', question: 'Portofolio guru berisi...', options: { A: 'Foto-foto kegiatan', B: 'Bukti kinerja dan pengembangan profesional', C: 'Sertifikat saja', D: 'Daftar nilai siswa', E: 'Absensi kehadiran' }, correctAnswer: 'B' },
+                    { id: 'q25', category: 'Pedagogik', question: 'Zona perkembangan proksimal (ZPD) adalah konsep dari...', options: { A: 'Piaget', B: 'Vygotsky', C: 'Bruner', D: 'Bloom', E: 'Gagne' }, correctAnswer: 'B' }
+                ];
+            }
+        };
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const State = {
+            currentView: 'login',
+            currentUser: null,
+            examState: null,
+            lastResult: null,
+            timerInterval: null,
+
+            setView(view) {
+                this.currentView = view;
+                App.render();
+            },
+
+            login(user) {
+                this.currentUser = user;
+                Store.set(Store.keys.currentUser, user);
+                this.setView(user.role === 'admin' ? 'admin' : 'dashboard');
+            },
+
+            logout() {
+                this.currentUser = null;
+                this.examState = null;
+                this.lastResult = null;
+                this.stopTimer();
+                Store.set(Store.keys.currentUser, null);
+                this.setView('login');
+            },
+
+            shuffleArray(array) {
+                const arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            },
+
+            shuffleOptions(options) {
+                const keys = ['A', 'B', 'C', 'D', 'E'];
+                const values = this.shuffleArray(Object.values(options));
+                const shuffled = {};
+                const mapping = {};
+                keys.forEach((key, i) => {
+                    shuffled[key] = values[i];
+                    mapping[values[i]] = key;
+                });
+                return { shuffled, mapping };
+            },
+
+            startExam(settings) {
+                const allQuestions = Store.get(Store.keys.questions) || [];
+                const usage = Store.get(Store.keys.questionUsage) || {};
+                const userId = this.currentUser.id;
+
+                const sortedQuestions = [...allQuestions].sort((a, b) => {
+                    const countA = (usage[userId] && usage[userId][a.id]) || 0;
+                    const countB = (usage[userId] && usage[userId][b.id]) || 0;
+                    return countA - countB;
+                });
+
+                let selectedQuestions = sortedQuestions.slice(0, Math.min(settings.questionCount, allQuestions.length));
+                selectedQuestions = this.shuffleArray(selectedQuestions);
+
+                selectedQuestions = selectedQuestions.map(q => {
+                    const { shuffled, mapping } = this.shuffleOptions(q.options);
+                    const newCorrectAnswer = mapping[q.options[q.correctAnswer]];
+                    return {
+                        ...q,
+                        shuffledOptions: shuffled,
+                        correctAnswerShuffled: newCorrectAnswer,
+                        originalCorrectAnswer: q.correctAnswer
+                    };
+                });
+
+                this.examState = {
+                    questions: selectedQuestions,
+                    currentIndex: 0,
+                    answers: {},
+                    doubts: {},
+                    startTime: Date.now(),
+                    duration: settings.duration * 60,
+                    timeRemaining: settings.duration * 60,
+                    submitted: false
+                };
+
+                this.setView('exam');
+                this.startTimer();
+            },
+
+            startTimer() {
+                this.stopTimer();
+                this.timerInterval = setInterval(() => {
+                    if (this.examState && !this.examState.submitted) {
+                        this.examState.timeRemaining--;
+                        if (this.examState.timeRemaining <= 0) {
+                            this.submitExam(true);
+                        } else {
+                            App.updateTimer();
+                        }
+                    }
+                }, 1000);
+            },
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            },
+
+            setAnswer(questionId, answer) {
+                if (this.examState && !this.examState.submitted) {
+                    this.examState.answers[questionId] = answer;
+                    App.updateQuestionNav();
+                    App.updateProgress();
+                }
+            },
+
+            toggleDoubt(questionId) {
+                if (this.examState) {
+                    if (this.examState.doubts[questionId]) {
+                        delete this.examState.doubts[questionId];
+                    } else {
+                        this.examState.doubts[questionId] = true;
+                    }
+                    App.updateQuestionNav();
+                    App.updateProgress();
+                }
+            },
+
+            goToQuestion(index) {
+                if (this.examState && index >= 0 && index < this.examState.questions.length) {
+                    this.examState.currentIndex = index;
+                    App.renderQuestion();
+                    App.updateQuestionNav();
+                }
+            },
+
+            nextQuestion() {
+                if (this.examState && this.examState.currentIndex < this.examState.questions.length - 1) {
+                    this.examState.currentIndex++;
+                    App.renderQuestion();
+                    App.updateQuestionNav();
+                }
+            },
+
+            prevQuestion() {
+                if (this.examState && this.examState.currentIndex > 0) {
+                    this.examState.currentIndex--;
+                    App.renderQuestion();
+                    App.updateQuestionNav();
+                }
+            },
+
+            submitExam(auto = false) {
+                if (!this.examState || this.examState.submitted) return;
+
+                this.stopTimer();
+                this.examState.submitted = true;
+
+                const questions = this.examState.questions;
+                const answers = this.examState.answers;
+
+                let correct = 0;
+                const details = questions.map(q => {
+                    const userAnswer = answers[q.id];
+                    const isCorrect = userAnswer === q.correctAnswerShuffled;
+                    if (isCorrect) correct++;
+
+                    return {
+                        questionId: q.id,
+                        category: q.category,
+                        question: q.question,
+                        options: q.options,
+                        shuffledOptions: q.shuffledOptions,
+                        userAnswer: userAnswer || null,
+                        correctAnswer: q.correctAnswerShuffled,
+                        isCorrect: isCorrect
+                    };
+                });
+
+                const score = Math.round((correct / questions.length) * 100);
+
+                const result = {
+                    id: 'r' + Date.now(),
+                    userId: this.currentUser.id,
+                    userName: this.currentUser.name,
+                    date: new Date().toISOString(),
+                    duration: this.examState.duration,
+                    questionCount: questions.length,
+                    correct: correct,
+                    score: score,
+                    details: details
+                };
+
+                const results = Store.get(Store.keys.results) || [];
+                results.unshift(result);
+                Store.set(Store.keys.results, results);
+
+                const usage = Store.get(Store.keys.questionUsage) || {};
+                const userId = this.currentUser.id;
+                if (!usage[userId]) usage[userId] = {};
+                questions.forEach(q => {
+                    usage[userId][q.id] = (usage[userId][q.id] || 0) + 1;
+                });
+                Store.set(Store.keys.questionUsage, usage);
+
+                this.lastResult = result;
+                this.setView('review');
+            },
+
+            init() {
+                Store.init();
+                const savedUser = Store.get(Store.keys.currentUser);
+                if (savedUser) {
+                    this.currentUser = savedUser;
+                    this.currentView = savedUser.role === 'admin' ? 'admin' : 'dashboard';
+                }
+            }
+        };
+
+        // ============================================
+        // APP
+        // ============================================
+        const App = {
+            app: document.getElementById('app'),
+            modalContainer: document.getElementById('modal-container'),
+            toastContainer: document.getElementById('toast-container'),
+
+            init() {
+                State.init();
+                this.render();
+            },
+
+            toast(message) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                this.toastContainer.appendChild(toast);
+                requestAnimationFrame(() => toast.classList.add('show'));
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            },
+
+            showModal(content) {
+                this.modalContainer.innerHTML = `
+                    <div class="modal-overlay active" onclick="Modal.close(event)">
+                        <div class="modal-content p-6" onclick="event.stopPropagation()">
+                            ${content}
+                        </div>
+                    </div>
+                `;
+            },
+
+            closeModal() {
+                const overlay = this.modalContainer.querySelector('.modal-overlay');
+                if (overlay) {
+                    overlay.classList.remove('active');
+                    setTimeout(() => this.modalContainer.innerHTML = '', 200);
+                }
+            },
+
+            render() {
+                const views = {
+                    login: () => this.renderLogin(),
+                    dashboard: () => this.renderDashboard(),
+                    exam: () => this.renderExam(),
+                    review: () => this.renderReview(),
+                    history: () => this.renderHistory(),
+                    admin: () => this.renderAdmin()
+                };
+                (views[State.currentView] || views.login)();
+            },
+
+            formatTime(seconds) {
+                const mins = Math.floor(Math.max(0, seconds) / 60);
+                const secs = Math.max(0, seconds) % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            },
+
+            updateTimer() {
+                const timerEl = document.getElementById('timer');
+                if (!timerEl || !State.examState) return;
+                const time = State.examState.timeRemaining;
+                timerEl.textContent = this.formatTime(time);
+                timerEl.className = 'text-lg font-bold ' + (time <= 60 ? 'timer-danger' : time <= 300 ? 'timer-warning' : 'timer-normal');
+            },
+
+            updateQuestionNav() {
+                const navEl = document.getElementById('question-nav');
+                if (!navEl || !State.examState) return;
+                const exam = State.examState;
+                navEl.innerHTML = exam.questions.map((q, i) => {
+                    const answered = exam.answers[q.id];
+                    const doubt = exam.doubts[q.id];
+                    const current = i === exam.currentIndex;
+                    let classes = 'question-nav-item';
+                    if (doubt) classes += ' doubt';
+                    else if (answered) classes += ' answered';
+                    if (current) classes += ' current';
+                    return `<div class="${classes}" onclick="State.goToQuestion(${i})">${i + 1}</div>`;
+                }).join('');
+            },
+
+            updateProgress() {
+                const progressEl = document.getElementById('progress-info');
+                if (!progressEl || !State.examState) return;
+                const exam = State.examState;
+                progressEl.textContent = `${Object.keys(exam.answers).length}/${exam.questions.length} dijawab`;
+            },
+
+            renderQuestion() {
+                const exam = State.examState;
+                if (!exam) return;
+
+                const currentQuestion = exam.questions[exam.currentIndex];
+                const userAnswer = exam.answers[currentQuestion.id];
+                const isLastQuestion = exam.currentIndex === exam.questions.length - 1;
+
+                const questionNumEl = document.getElementById('question-number');
+                if (questionNumEl) questionNumEl.textContent = `Soal ${exam.currentIndex + 1} dari ${exam.questions.length}`;
+
+                const categoryEl = document.getElementById('current-category');
+                if (categoryEl) categoryEl.textContent = currentQuestion.category;
+
+                const questionTextEl = document.getElementById('question-text');
+                if (questionTextEl) questionTextEl.textContent = currentQuestion.question;
+
+                const optionsContainer = document.getElementById('options-container');
+                if (optionsContainer) {
+                    optionsContainer.innerHTML = ['A', 'B', 'C', 'D', 'E'].map(opt => `
+                        <div class="option-item ${userAnswer === opt ? 'selected' : ''}" onclick="Exam.selectOption('${opt}')">
+                            <span class="option-label">${opt}.</span>
+                            <span>${currentQuestion.shuffledOptions[opt]}</span>
+                        </div>
+                    `).join('');
+                }
+
+                const doubtBtn = document.getElementById('doubt-btn');
+                if (doubtBtn) {
+                    const isDoubt = exam.doubts[currentQuestion.id];
+                    doubtBtn.textContent = isDoubt ? 'Hapus Ragu' : 'Ragu-ragu';
+                    doubtBtn.className = isDoubt ? 'btn-secondary badge-warning' : 'btn-secondary';
+                }
+
+                const navButtons = document.getElementById('nav-buttons');
+                if (navButtons) {
+                    navButtons.innerHTML = `
+                        <button onclick="State.prevQuestion()" class="btn-secondary flex-1 min-w-[100px]" ${exam.currentIndex === 0 ? 'disabled style="opacity:0.5"' : ''}>
+                            Sebelumnya
+                        </button>
+                        <button onclick="Exam.toggleDoubtBtn('${currentQuestion.id}')" class="btn-secondary" id="doubt-btn">
+                            ${exam.doubts[currentQuestion.id] ? 'Hapus Ragu' : 'Ragu-ragu'}
+                        </button>
+                        ${isLastQuestion ? `
+                            <button onclick="Exam.confirmSubmit()" class="btn-finish flex-1 min-w-[100px]">
+                                Selesai
+                            </button>
+                        ` : `
+                            <button onclick="State.nextQuestion()" class="btn-primary flex-1 min-w-[100px]">
+                                Selanjutnya
+                            </button>
+                        `}
+                    `;
+                }
+            },
+
+            renderLogin() {
+                this.app.innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center p-4">
+                        <div class="card p-8 w-full max-w-md">
+                            <div class="text-center mb-8">
+                                <h1 class="text-2xl font-bold mb-2" style="color: var(--accent-primary)">UP PPG</h1>
+                                <p class="text-sm" style="color: var(--text-secondary)">Latihan Soal Computer Based Test</p>
+                            </div>
+                            <form onsubmit="Login.handle(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary)">Username</label>
+                                    <input type="text" id="login-username" class="input-field" placeholder="Masukkan username" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary)">Password</label>
+                                    <input type="password" id="login-password" class="input-field" placeholder="Masukkan password" required>
+                                </div>
+                                <button type="submit" class="btn-primary w-full mt-6">Masuk sebagai Peserta</button>
+                            </form>
+                            <div class="mt-6 pt-6 border-t text-center" style="border-color: var(--border-color)">
+                                <p class="text-xs mb-2" style="color: var(--text-muted)">Demo: peserta / peserta123</p>
+                                <button onclick="Login.showAdmin()" class="text-xs hover:underline" style="color: var(--text-muted)">Login sebagai Admin</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderDashboard() {
+                const user = State.currentUser;
+                const results = (Store.get(Store.keys.results) || []).filter(r => r.userId === user.id);
+                const settings = Store.get(Store.keys.settings) || { defaultDuration: 60, defaultQuestionCount: 20 };
+                const totalQuestions = (Store.get(Store.keys.questions) || []).length;
+
+                this.app.innerHTML = `
+                    <div class="min-h-screen">
+                        <header class="card rounded-none border-x-0 border-t-0 px-4 md:px-6 py-4">
+                            <div class="max-w-5xl mx-auto flex items-center justify-between">
+                                <div>
+                                    <h1 class="text-xl font-bold" style="color: var(--accent-primary)">UP PPG</h1>
+                                    <p class="text-sm" style="color: var(--text-secondary)">Latihan CBT</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm hidden sm:inline" style="color: var(--text-secondary)">Hai, ${user.name}</span>
+                                    <button onclick="State.logout()" class="btn-secondary text-sm py-2 px-4">Keluar</button>
+                                </div>
+                            </div>
+                        </header>
+                        <main class="max-w-5xl mx-auto p-4 md:p-6">
+                            <div class="grid sm:grid-cols-3 gap-4 mb-6">
+                                <div class="card p-5">
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Bank Soal</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${totalQuestions}</p>
+                                </div>
+                                <div class="card p-5">
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Latihan Selesai</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length}</p>
+                                </div>
+                                <div class="card p-5">
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Rata-rata Nilai</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length > 0 ? Math.round(results.reduce((a, b) => a + b.score, 0) / results.length) : 0}</p>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="card p-6">
+                                    <h2 class="font-semibold mb-4" style="color: var(--text-primary)">Mulai Latihan Baru</h2>
+                                    <button onclick="Dashboard.showSettings()" class="btn-primary w-full">Mulai Latihan</button>
+                                </div>
+                                <div class="card p-6">
+                                    <h2 class="font-semibold mb-4" style="color: var(--text-primary)">Riwayat Latihan</h2>
+                                    ${results.length > 0 ? `
+                                        <div class="space-y-3 mb-4">
+                                            ${results.slice(0, 3).map(r => `
+                                                <div class="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:opacity-80" style="background: var(--accent-lighter)" onclick="History.view('${r.id}')">
+                                                    <div>
+                                                        <p class="text-sm font-medium">${new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                                        <p class="text-xs" style="color: var(--text-muted)">${r.questionCount} soal</p>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <p class="font-bold" style="color: ${r.score >= 70 ? 'var(--accent-primary)' : 'var(--error)'}">${r.score}</p>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                        <button onclick="State.setView('history')" class="btn-secondary w-full text-sm">Lihat Semua</button>
+                                    ` : `<p class="text-sm text-center py-4" style="color: var(--text-muted)">Belum ada riwayat</p>`}
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                `;
+            },
+
+            renderExam() {
+                const exam = State.examState;
+                if (!exam) return;
+
+                const currentQuestion = exam.questions[exam.currentIndex];
+                const userAnswer = exam.answers[currentQuestion.id];
+                const isLastQuestion = exam.currentIndex === exam.questions.length - 1;
+
+                this.app.innerHTML = `
+                    <div class="min-h-screen flex flex-col">
+                        <header class="card rounded-none border-x-0 border-t-0 px-4 py-3">
+                            <div class="max-w-5xl mx-auto flex items-center justify-between flex-wrap gap-3">
+                                <p id="question-number" class="text-sm" style="color: var(--text-muted)">Soal ${exam.currentIndex + 1} dari ${exam.questions.length}</p>
+                                <div id="timer" class="text-lg font-bold timer-normal">${this.formatTime(exam.timeRemaining)}</div>
+                                <p id="progress-info" class="text-sm" style="color: var(--text-secondary)">${Object.keys(exam.answers).length}/${exam.questions.length} dijawab</p>
+                            </div>
+                        </header>
+                        <div class="flex-1 flex flex-col lg:flex-row max-w-5xl mx-auto w-full p-4 gap-4">
+                            <div class="flex-1">
+                                <div class="card p-5 md:p-6">
+                                    <div class="mb-4">
+                                        <span id="current-category" class="badge badge-category">${currentQuestion.category}</span>
+                                    </div>
+                                    <p id="question-text" class="text-base md:text-lg font-medium mb-6" style="color: var(--text-primary)">${currentQuestion.question}</p>
+                                    <div id="options-container" class="space-y-3">
+                                        ${['A', 'B', 'C', 'D', 'E'].map(opt => `
+                                            <div class="option-item ${userAnswer === opt ? 'selected' : ''}" onclick="Exam.selectOption('${opt}')">
+                                                <span class="option-label">${opt}.</span>
+                                                <span>${currentQuestion.shuffledOptions[opt]}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div id="nav-buttons" class="flex flex-wrap gap-3 mt-6 pt-6 border-t" style="border-color: var(--border-color)">
+                                        <button onclick="State.prevQuestion()" class="btn-secondary flex-1 min-w-[100px]" ${exam.currentIndex === 0 ? 'disabled style="opacity:0.5"' : ''}>
+                                            Sebelumnya
+                                        </button>
+                                        <button onclick="Exam.toggleDoubtBtn('${currentQuestion.id}')" class="btn-secondary" id="doubt-btn">
+                                            ${exam.doubts[currentQuestion.id] ? 'Hapus Ragu' : 'Ragu-ragu'}
+                                        </button>
+                                        ${isLastQuestion ? `
+                                            <button onclick="Exam.confirmSubmit()" class="btn-finish flex-1 min-w-[100px]">
+                                                Selesai
+                                            </button>
+                                        ` : `
+                                            <button onclick="State.nextQuestion()" class="btn-primary flex-1 min-w-[100px]">
+                                                Selanjutnya
+                                            </button>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:w-60">
+                                <div class="card p-4 sticky top-4">
+                                    <h3 class="font-medium mb-3 text-sm" style="color: var(--text-primary)">Navigasi Soal</h3>
+                                    <div id="question-nav" class="grid grid-cols-5 gap-2">
+                                        ${exam.questions.map((q, i) => {
+                                            const answered = exam.answers[q.id];
+                                            const doubt = exam.doubts[q.id];
+                                            const current = i === exam.currentIndex;
+                                            let classes = 'question-nav-item';
+                                            if (doubt) classes += ' doubt';
+                                            else if (answered) classes += ' answered';
+                                            if (current) classes += ' current';
+                                            return `<div class="${classes}" onclick="State.goToQuestion(${i})">${i + 1}</div>`;
+                                        }).join('')}
+                                    </div>
+                                    <div class="mt-4 pt-4 border-t text-xs space-y-2" style="border-color: var(--border-color)">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-4 h-4 rounded" style="background: var(--accent-primary)"></div>
+                                            <span style="color: var(--text-secondary)">Dijawab</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-4 h-4 rounded" style="background: var(--warning)"></div>
+                                            <span style="color: var(--text-secondary)">Ragu-ragu</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-4 h-4 rounded border" style="border-color: var(--border-color)"></div>
+                                            <span style="color: var(--text-secondary)">Belum dijawab</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderReview() {
+                const result = State.lastResult;
+                if (!result) {
+                    State.setView('dashboard');
+                    return;
+                }
+
+                this.app.innerHTML = `
+                    <div class="min-h-screen">
+                        <header class="card rounded-none border-x-0 border-t-0 px-4 md:px-6 py-4">
+                            <div class="max-w-4xl mx-auto flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <button onclick="State.setView('dashboard')" class="btn-secondary py-2 px-3 text-sm">Kembali</button>
+                                    <h1 class="text-lg font-bold" style="color: var(--accent-primary)">Hasil Latihan</h1>
+                                </div>
+                            </div>
+                        </header>
+                        
+                        <main class="max-w-4xl mx-auto p-4 md:p-6">
+                            <div class="result-header mb-6">
+                                <div class="score-circle">
+                                    <span class="text-4xl font-bold" style="color: ${result.score >= 70 ? 'var(--accent-primary)' : 'var(--error)'}">${result.score}</span>
+                                </div>
+                                <h2 class="text-xl font-bold mb-2">${result.score >= 70 ? 'Selamat!' : 'Tetap Semangat!'}</h2>
+                                <p class="opacity-90">${result.correct} dari ${result.questionCount} soal dijawab benar</p>
+                            </div>
+                            
+                            <div class="grid sm:grid-cols-4 gap-4 mb-6">
+                                <div class="card p-4 text-center">
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${result.questionCount}</p>
+                                    <p class="text-xs" style="color: var(--text-muted)">Total Soal</p>
+                                </div>
+                                <div class="card p-4 text-center">
+                                    <p class="text-2xl font-bold" style="color: var(--success)">${result.correct}</p>
+                                    <p class="text-xs" style="color: var(--text-muted)">Benar</p>
+                                </div>
+                                <div class="card p-4 text-center">
+                                    <p class="text-2xl font-bold" style="color: var(--error)">${result.questionCount - result.correct}</p>
+                                    <p class="text-xs" style="color: var(--text-muted)">Salah</p>
+                                </div>
+                                <div class="card p-4 text-center">
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${Math.floor(result.duration / 60)}</p>
+                                    <p class="text-xs" style="color: var(--text-muted)">Menit</p>
+                                </div>
+                            </div>
+                            
+                            <h3 class="font-semibold mb-4" style="color: var(--text-primary)">Pembahasan Soal</h3>
+                            <div class="space-y-4">
+                                ${result.details.map((d, i) => `
+                                    <div class="card review-item ${d.isCorrect ? 'correct' : 'incorrect'} p-5">
+                                        <div class="flex items-start gap-3 mb-4">
+                                            <span class="font-bold text-sm" style="color: var(--text-secondary)">${i + 1}.</span>
+                                            <div class="flex-1">
+                                                <div class="flex flex-wrap items-center gap-2 mb-2">
+                                                    <span class="badge badge-category">${d.category}</span>
+                                                    ${d.isCorrect ? '<span class="badge badge-success">Benar</span>' : '<span class="badge badge-error">Salah</span>'}
+                                                </div>
+                                                <p class="font-medium" style="color: var(--text-primary)">${d.question}</p>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2 ml-6">
+                                            ${['A', 'B', 'C', 'D', 'E'].map(opt => {
+                                                const isCorrect = d.correctAnswer === opt;
+                                                const isUserAnswer = d.userAnswer === opt;
+                                                let classes = 'option-item disabled';
+                                                if (isCorrect) classes += ' correct';
+                                                else if (isUserAnswer && !isCorrect) classes += ' incorrect';
+                                                
+                                                return `
+                                                    <div class="${classes}">
+                                                        <span class="option-label">${opt}.</span>
+                                                        <span class="flex-1">${d.shuffledOptions[opt]}</span>
+                                                        ${isCorrect ? '<span class="badge badge-success text-xs ml-auto">Jawaban Benar</span>' : ''}
+                                                        ${isUserAnswer && !isCorrect ? '<span class="badge badge-error text-xs ml-auto">Jawaban Anda</span>' : ''}
+                                                        ${isUserAnswer && isCorrect ? '<span class="badge badge-success text-xs ml-auto">Jawaban Anda</span>' : ''}
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="mt-6 flex gap-4">
+                                <button onclick="State.setView('dashboard')" class="btn-secondary flex-1">Kembali ke Dashboard</button>
+                                <button onclick="Dashboard.showSettings()" class="btn-primary flex-1">Latihan Lagi</button>
+                            </div>
+                        </main>
+                    </div>
+                `;
+            },
+
+            renderHistory() {
+                const user = State.currentUser;
+                const results = (Store.get(Store.keys.results) || []).filter(r => r.userId === user.id);
+
+                this.app.innerHTML = `
+                    <div class="min-h-screen">
+                        <header class="card rounded-none border-x-0 border-t-0 px-4 md:px-6 py-4">
+                            <div class="max-w-4xl mx-auto flex items-center gap-4">
+                                <button onclick="State.setView('dashboard')" class="btn-secondary py-2 px-3 text-sm">Kembali</button>
+                                <h1 class="text-xl font-bold" style="color: var(--accent-primary)">Riwayat Latihan</h1>
+                            </div>
+                        </header>
+                        <main class="max-w-4xl mx-auto p-4 md:p-6">
+                            ${results.length > 0 ? `
+                                <div class="space-y-3">
+                                    ${results.map((r, i) => `
+                                        <div class="card p-4 cursor-pointer hover:border-[var(--accent-primary)] transition-colors" onclick="History.view('${r.id}')">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="font-medium" style="color: var(--text-primary)">Latihan #${results.length - i}</p>
+                                                    <p class="text-sm" style="color: var(--text-muted)">${new Date(r.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                                    <p class="text-xs mt-1" style="color: var(--text-muted)">${r.questionCount} soal - ${Math.floor(r.duration / 60)} menit</p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-2xl font-bold" style="color: ${r.score >= 70 ? 'var(--accent-primary)' : 'var(--error)'}">${r.score}</p>
+                                                    <p class="text-xs" style="color: var(--text-muted)">${r.correct}/${r.questionCount} benar</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : `
+                                <div class="card p-8 text-center">
+                                    <p style="color: var(--text-muted)">Belum ada riwayat latihan</p>
+                                </div>
+                            `}
+                        </main>
+                    </div>
+                `;
+            },
+
+            renderAdmin() {
+                const questions = Store.get(Store.keys.questions) || [];
+                const settings = Store.get(Store.keys.settings) || { defaultDuration: 60, defaultQuestionCount: 20 };
+                const results = Store.get(Store.keys.results) || [];
+                const users = Store.get(Store.keys.users) || [];
+
+                this.app.innerHTML = `
+                    <div class="min-h-screen">
+                        <header class="card rounded-none border-x-0 border-t-0 px-4 md:px-6 py-4">
+                            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                                <div>
+                                    <h1 class="text-xl font-bold" style="color: var(--accent-primary)">Admin Dashboard</h1>
+                                    <p class="text-sm" style="color: var(--text-secondary)">Manajemen Sistem</p>
+                                </div>
+                                <button onclick="State.logout()" class="btn-secondary text-sm py-2 px-4">Keluar</button>
+                            </div>
+                        </header>
+                        <main class="max-w-6xl mx-auto p-4 md:p-6">
+                            <div class="grid sm:grid-cols-4 gap-4 mb-6">
+                                <div class="card p-5">
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Total Soal</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${questions.length}</p>
+                                </div>
+                                <div class="card p-5">
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Peserta</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${users.filter(u => u.role === 'peserta').length}</p>
+                                </div>
+                                <div class="card p-5">
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Total Ujian</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length}</p>
+                                </div>
+                                <div class="card p-5">
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Rata-rata</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length > 0 ? Math.round(results.reduce((a, b) => a + b.score, 0) / results.length) : 0}</p>
+                                </div>
+                            </div>
+                            <div class="grid lg:grid-cols-3 gap-6">
+                                <div class="lg:col-span-2">
+                                    <div class="card p-5">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h2 class="font-semibold" style="color: var(--text-primary)">Bank Soal (${questions.length})</h2>
+                                            <div class="flex gap-2">
+                                                <button onclick="Admin.showImport()" class="btn-secondary text-sm py-2">Import</button>
+                                                <button onclick="Admin.showAdd()" class="btn-primary text-sm py-2">Tambah</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4 flex items-center gap-4">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="checkbox" id="select-all" onchange="Admin.toggleAll(this)" class="w-4 h-4 accent-[var(--accent-primary)]">
+                                                <span class="text-sm" style="color: var(--text-secondary)">Pilih Semua</span>
+                                            </label>
+                                            <button onclick="Admin.deleteSelected()" id="delete-btn" class="text-sm px-3 py-1 rounded hidden" style="color: var(--error); background: var(--error-bg)">Hapus Terpilih</button>
+                                        </div>
+                                        
+                                        <!-- Updated: Removed slice(0, 10) to show ALL questions -->
+                                        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                                            ${questions.map(q => `
+                                                <div class="admin-question-item">
+                                                    <input type="checkbox" class="q-cb mt-1 w-4 h-4 accent-[var(--accent-primary)]" data-id="${q.id}" onchange="Admin.updateBtn()">
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="flex items-center gap-2 mb-1">
+                                                            <span class="badge badge-category text-xs">${q.category}</span>
+                                                            <span class="text-xs font-medium" style="color: var(--success)">Jawaban: ${q.correctAnswer}</span>
+                                                        </div>
+                                                        <p class="text-sm" style="color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                                            ${q.question}
+                                                        </p>
+                                                    </div>
+                                                    <div class="flex gap-1 shrink-0">
+                                                        <button onclick="Admin.edit('${q.id}')" class="text-xs px-2 py-1 rounded" style="color: var(--accent-primary); background: var(--accent-light)">Edit</button>
+                                                        <button onclick="Admin.delete('${q.id}')" class="text-xs px-2 py-1 rounded" style="color: var(--error); background: var(--error-bg)">Hapus</button>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                            
+                                            ${questions.length === 0 ? `
+                                                <div class="text-center py-8">
+                                                    <p style="color: var(--text-muted)">Belum ada soal. Klik "Tambah" untuk menambahkan.</p>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-6">
+                                    <div class="card p-5">
+                                        <h2 class="font-semibold mb-4" style="color: var(--text-primary)">Pengaturan</h2>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm mb-2" style="color: var(--text-secondary)">Durasi (menit)</label>
+                                                <input type="number" id="setting-duration" class="input-field" value="${settings.defaultDuration}" min="5" max="180">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm mb-2" style="color: var(--text-secondary)">Jumlah Soal</label>
+                                                <input type="number" id="setting-count" class="input-field" value="${settings.defaultQuestionCount}" min="5" max="${questions.length}">
+                                            </div>
+                                            <button onclick="Admin.saveSettings()" class="btn-primary w-full text-sm">Simpan</button>
+                                        </div>
+                                    </div>
+                                    <div class="card p-5">
+                                        <h2 class="font-semibold mb-4" style="color: var(--text-primary)">Data</h2>
+                                        <div class="space-y-3">
+                                            <button onclick="Admin.exportData()" class="btn-secondary w-full text-sm">Export JSON</button>
+                                            <button onclick="Admin.clearHistory()" class="btn-secondary w-full text-sm" style="color: var(--error)">Hapus Riwayat</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </main>
+                    </div>
+                `;
+            }
+        };
+
+        // ============================================
+        // HANDLERS
+        // ============================================
+        const Login = {
+            handle(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value;
+                const users = Store.get(Store.keys.users) || [];
+                const user = users.find(u => u.username === username && u.password === password);
+                if (user) { State.login(user); } else { App.toast('Username atau password salah'); }
+            },
+            showAdmin() {
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">Login Admin</h3>
+                    <form onsubmit="Login.adminLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Username</label>
+                            <input type="text" id="admin-user" class="input-field" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Password</label>
+                            <input type="password" id="admin-pass" class="input-field" required>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="App.closeModal()" class="btn-secondary flex-1">Batal</button>
+                            <button type="submit" class="btn-primary flex-1">Masuk</button>
+                        </div>
+                    </form>
+                    <p class="text-xs text-center mt-4" style="color: var(--text-muted)">Demo: admin / admin123</p>
+                `);
+            },
+            adminLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('admin-user').value.trim();
+                const password = document.getElementById('admin-pass').value;
+                const users = Store.get(Store.keys.users) || [];
+                const user = users.find(u => u.username === username && u.password === password && u.role === 'admin');
+                if (user) { App.closeModal(); State.login(user); } else { App.toast('Kredensial admin tidak valid'); }
+            }
+        };
+
+        const Dashboard = {
+            showSettings() {
+                const settings = Store.get(Store.keys.settings) || { defaultDuration: 60, defaultQuestionCount: 20 };
+                const totalQuestions = (Store.get(Store.keys.questions) || []).length;
+
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">Pengaturan Ujian</h3>
+                    <form onsubmit="Dashboard.start(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Durasi (menit)</label>
+                            <input type="number" id="exam-duration" class="input-field" value="${settings.defaultDuration}" min="5" max="180" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Jumlah Soal</label>
+                            <input type="number" id="exam-count" class="input-field" value="${Math.min(settings.defaultQuestionCount, totalQuestions)}" min="5" max="${totalQuestions}" required>
+                            <p class="text-xs mt-1" style="color: var(--text-muted)">Tersedia ${totalQuestions} soal</p>
+                        </div>
+                        <div class="flex gap-3 pt-2">
+                            <button type="button" onclick="App.closeModal()" class="btn-secondary flex-1">Batal</button>
+                            <button type="submit" class="btn-primary flex-1">Mulai</button>
+                        </div>
+                    </form>
+                `);
+            },
+            start(e) {
+                e.preventDefault();
+                const duration = parseInt(document.getElementById('exam-duration').value);
+                const questionCount = parseInt(document.getElementById('exam-count').value);
+                App.closeModal();
+                State.startExam({ duration, questionCount });
+            }
+        };
+
+        const Exam = {
+            selectOption(opt) {
+                if (!State.examState || State.examState.submitted) return;
+                const q = State.examState.questions[State.examState.currentIndex];
+                State.setAnswer(q.id, opt);
+                App.renderQuestion();
+            },
+            toggleDoubtBtn(qId) { State.toggleDoubt(qId); App.renderQuestion(); },
+            confirmSubmit() {
+                const exam = State.examState;
+                if (!exam) return;
+                const answered = Object.keys(exam.answers).length;
+                const total = exam.questions.length;
+                const unanswered = total - answered;
+
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">Selesaikan Ujian?</h3>
+                    <div class="p-4 rounded-lg mb-4" style="background: var(--accent-lighter)">
+                        <p class="text-sm mb-2">Total soal: <strong>${total}</strong></p>
+                        <p class="text-sm mb-2" style="color: var(--success)">Dijawab: <strong>${answered}</strong></p>
+                        ${unanswered > 0 ? `<p class="text-sm" style="color: var(--error)">Belum dijawab: <strong>${unanswered}</strong></p>` : ''}
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="App.closeModal()" class="btn-secondary flex-1">Kembali</button>
+                        <button onclick="Exam.submit()" class="btn-finish flex-1">Selesai</button>
+                    </div>
+                `);
+            },
+            submit() { App.closeModal(); State.submitExam(false); }
+        };
+
+        const History = {
+            view(resultId) {
+                const results = Store.get(Store.keys.results) || [];
+                const result = results.find(r => r.id === resultId);
+                if (result) { State.lastResult = result; State.setView('review'); }
+            }
+        };
+
+        const Admin = {
+            showAdd() { this.showForm(null); },
+            edit(id) { const questions = Store.get(Store.keys.questions) || []; const q = questions.find(x => x.id === id); if (q) this.showForm(q); },
+            showForm(q) {
+                const isEdit = q !== null;
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">${isEdit ? 'Edit Soal' : 'Tambah Soal'}</h3>
+                    <form onsubmit="Admin.save(event, ${isEdit ? `'${q.id}'` : 'null'})" class="space-y-4">
+                        <div>
+                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Kategori</label>
+                            <input type="text" id="form-cat" class="input-field" value="${isEdit ? q.category : ''}" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Pertanyaan</label>
+                            <textarea id="form-q" class="input-field" rows="3" required>${isEdit ? q.question : ''}</textarea>
+                        </div>
+                        ${['A', 'B', 'C', 'D', 'E'].map(opt => `
+                            <div>
+                                <label class="block text-sm mb-1" style="color: var(--text-secondary)">Opsi ${opt}</label>
+                                <input type="text" id="form-${opt}" class="input-field" value="${isEdit ? q.options[opt] : ''}" required>
+                            </div>
+                        `).join('')}
+                        <div>
+                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Jawaban Benar</label>
+                            <select id="form-ans" class="input-field" required>
+                                <option value="">Pilih</option>
+                                ${['A', 'B', 'C', 'D', 'E'].map(opt => `<option value="${opt}" ${isEdit && q.correctAnswer === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="App.closeModal()" class="btn-secondary flex-1">Batal</button>
+                            <button type="submit" class="btn-primary flex-1">${isEdit ? 'Simpan' : 'Tambah'}</button>
+                        </div>
+                    </form>
+                `);
+            },
+            save(e, editId) {
+                e.preventDefault();
+                const data = {
+                    id: editId || 'q' + Date.now(),
+                    category: document.getElementById('form-cat').value.trim(),
+                    question: document.getElementById('form-q').value.trim(),
+                    options: { A: document.getElementById('form-A').value.trim(), B: document.getElementById('form-B').value.trim(), C: document.getElementById('form-C').value.trim(), D: document.getElementById('form-D').value.trim(), E: document.getElementById('form-E').value.trim() },
+                    correctAnswer: document.getElementById('form-ans').value
+                };
+                const questions = Store.get(Store.keys.questions) || [];
+                if (editId) { const idx = questions.findIndex(x => x.id === editId); if (idx !== -1) questions[idx] = data; }
+                else { questions.push(data); }
+                Store.set(Store.keys.questions, questions);
+                App.closeModal();
+                App.toast(editId ? 'Soal diperbarui' : 'Soal ditambahkan');
+                App.render();
+            },
+            delete(id) { if (!confirm('Hapus soal ini?')) return; let questions = Store.get(Store.keys.questions) || []; questions = questions.filter(q => q.id !== id); Store.set(Store.keys.questions, questions); App.toast('Soal dihapus'); App.render(); },
+            toggleAll(cb) { document.querySelectorAll('.q-cb').forEach(c => c.checked = cb.checked); this.updateBtn(); },
+            updateBtn() { const checked = document.querySelectorAll('.q-cb:checked'); const btn = document.getElementById('delete-btn'); if (btn) btn.classList.toggle('hidden', checked.length === 0); },
+            deleteSelected() { const checked = document.querySelectorAll('.q-cb:checked'); if (checked.length === 0 || !confirm(`Hapus ${checked.length} soal?`)) return; const ids = Array.from(checked).map(c => c.dataset.id); let questions = Store.get(Store.keys.questions) || []; questions = questions.filter(q => !ids.includes(q.id)); Store.set(Store.keys.questions, questions); App.toast(`${checked.length} soal dihapus`); App.render(); },
+            showImport() {
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-2" style="color: var(--text-primary)">Import Soal</h3>
+                    <p class="text-sm mb-4" style="color: var(--text-muted)">Format: Kategori | Soal | A | B | C | D | E | Jawaban. Pisahkan soal dengan baris kosong.</p>
+                    <form onsubmit="Admin.import(event)" class="space-y-4">
+                        <textarea id="import-text" class="input-field" rows="8" placeholder="Pedagogik | Apa itu... | Opsi A | Opsi B | Opsi C | Opsi D | Opsi E | B" required></textarea>
+                        <div class="flex gap-3">
+                            <button type="button" onclick="App.closeModal()" class="btn-secondary flex-1">Batal</button>
+                            <button type="submit" class="btn-primary flex-1">Import</button>
+                        </div>
+                    </form>
+                `);
+            },
+            import(e) {
+                e.preventDefault();
+                const text = document.getElementById('import-text').value;
+                const blocks = text.split(/\n\s*\n/).filter(b => b.trim());
+                const questions = Store.get(Store.keys.questions) || [];
+                let imported = 0;
+                blocks.forEach(block => {
+                    const parts = block.split('|').map(p => p.trim());
+                    if (parts.length === 8) {
+                        const [cat, q, A, B, C, D, E, ans] = parts;
+                        if (['A', 'B', 'C', 'D', 'E'].includes(ans.toUpperCase())) {
+                            questions.push({ id: 'q' + Date.now() + Math.random().toString(36).substr(2, 9), category: cat, question: q, options: { A, B, C, D, E }, correctAnswer: ans.toUpperCase() });
+                            imported++;
+                        }
+                    }
+                });
+                Store.set(Store.keys.questions, questions);
+                App.closeModal();
+                App.toast(`Import: ${imported} soal`);
+                App.render();
+            },
+            saveSettings() { const duration = parseInt(document.getElementById('setting-duration').value); const count = parseInt(document.getElementById('setting-count').value); Store.set(Store.keys.settings, { defaultDuration: duration, defaultQuestionCount: count }); App.toast('Pengaturan disimpan'); },
+            exportData() { const data = { users: Store.get(Store.keys.users), questions: Store.get(Store.keys.questions), results: Store.get(Store.keys.results), settings: Store.get(Store.keys.settings), exportedAt: new Date().toISOString() }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `uppg-data-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); App.toast('Data diekspor'); },
+            clearHistory() { if (!confirm('Hapus semua riwayat ujian?')) return; Store.set(Store.keys.results, []); Store.set(Store.keys.questionUsage, {}); App.toast('Riwayat dihapus'); App.render(); }
+        };
+
+        const Modal = { close(e) { if (e.target.classList.contains('modal-overlay')) App.closeModal(); } };
+
+        document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
 </html>
