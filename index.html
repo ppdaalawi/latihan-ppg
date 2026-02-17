@@ -95,6 +95,20 @@
             box-shadow: 0 4px 12px rgba(45, 138, 110, 0.4);
         }
 
+        .btn-danger-sm {
+            background: var(--error);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-danger-sm:hover { opacity: 0.9; }
+
         .input-field {
             width: 100%;
             padding: 12px 16px;
@@ -109,6 +123,27 @@
             outline: none;
             border-color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(45, 138, 110, 0.1);
+        }
+
+        .textarea-case {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            line-height: 1.7;
+            background: var(--bg-primary);
+            resize: vertical;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .textarea-case:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: var(--bg-secondary);
+            box-shadow: 0 0 0 4px rgba(45, 138, 110, 0.08);
         }
 
         .question-nav-item {
@@ -130,6 +165,33 @@
         .question-nav-item.answered { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
         .question-nav-item.doubt { background: var(--warning); color: white; border-color: var(--warning); }
         .question-nav-item.current { border: 2px solid var(--accent-primary); font-weight: 600; }
+
+        .step-item {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid var(--border-color);
+            background: var(--bg-secondary);
+            font-size: 14px;
+        }
+
+        .step-item.active {
+            border-color: var(--accent-primary);
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .step-item.filled {
+            border-color: var(--accent-secondary);
+            background: var(--accent-light);
+            color: var(--accent-primary);
+        }
 
         .option-item {
             padding: 14px 18px;
@@ -187,6 +249,8 @@
         }
 
         .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+
+        .modal-wide { max-width: 700px; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-primary); }
@@ -250,7 +314,6 @@
         .review-item.correct { border-left-color: var(--success); }
         .review-item.incorrect { border-left-color: var(--error); }
 
-        /* Style for Admin Question List Item */
         .admin-question-item {
             border: 1px solid var(--border-color);
             background: var(--bg-secondary);
@@ -263,6 +326,20 @@
         }
         
         .admin-question-item:hover {
+            border-color: var(--accent-primary);
+            background: var(--accent-lighter);
+        }
+
+        .history-item {
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+        }
+
+        .history-item:hover {
             border-color: var(--accent-primary);
             background: var(--accent-lighter);
         }
@@ -290,6 +367,7 @@
                 users: 'uppg_users',
                 questions: 'uppg_questions',
                 results: 'uppg_results',
+                caseResults: 'uppg_case_results',
                 settings: 'uppg_settings',
                 currentUser: 'uppg_current_user',
                 questionUsage: 'uppg_question_usage'
@@ -307,6 +385,9 @@
                 }
                 if (!this.get(this.keys.results)) {
                     this.set(this.keys.results, []);
+                }
+                if (!this.get(this.keys.caseResults)) {
+                    this.set(this.keys.caseResults, []);
                 }
                 if (!this.get(this.keys.settings)) {
                     this.set(this.keys.settings, { defaultDuration: 60, defaultQuestionCount: 20 });
@@ -355,7 +436,7 @@
                     { id: 'q21', category: 'Pedagogik', question: 'Model pembelajaran discovery learning menekankan pada...', options: { A: 'Pemberian informasi langsung', B: 'Penemuan konsep oleh siswa sendiri', C: 'Menghafal definisi', D: 'Ceramah guru', E: 'Pembacaan buku' }, correctAnswer: 'B' },
                     { id: 'q22', category: 'Profesional', question: 'Mentoring dalam konteks keprofesian guru adalah...', options: { A: 'Pengawasan ketat', B: 'Pembinaan oleh guru berpengalaman kepada guru pemula', C: 'Persaingan', D: 'Cara menilai guru', E: 'Pelatihan massal' }, correctAnswer: 'B' },
                     { id: 'q23', category: 'Pedagogik', question: 'HOTS (Higher Order Thinking Skills) mencakup kemampuan...', options: { A: 'Mengingat dan menghafal', B: 'Menganalisis, mengevaluasi, dan mencipta', C: 'Menyalin dan menempel', D: 'Membaca dan menulis', E: 'Mendengar dan mencatat' }, correctAnswer: 'B' },
-                    { id: 'q24', category: 'Profesional', question: 'Portofolio guru berisi...', options: { A: 'Foto-foto kegiatan', B: 'Bukti kinerja dan pengembangan profesional', C: 'Sertifikat saja', D: 'Daftar nilai siswa', E: 'Absensi kehadiran' }, correctAnswer: 'B' },
+                    { id: 'q24', category: 'Profesional', question: 'Portofolio guru berisi...', options: { A: 'Foto-foto kegiatan', B: 'Bukti kinerja dan pengembangan profesional', C: 'Sertifikat saja', D: 'Daftar nilai siswa', E: 'Absensi kehadrian' }, correctAnswer: 'B' },
                     { id: 'q25', category: 'Pedagogik', question: 'Zona perkembangan proksimal (ZPD) adalah konsep dari...', options: { A: 'Piaget', B: 'Vygotsky', C: 'Bruner', D: 'Bloom', E: 'Gagne' }, correctAnswer: 'B' }
                 ];
             }
@@ -368,6 +449,7 @@
             currentView: 'login',
             currentUser: null,
             examState: null,
+            caseState: null,
             lastResult: null,
             timerInterval: null,
 
@@ -385,6 +467,7 @@
             logout() {
                 this.currentUser = null;
                 this.examState = null;
+                this.caseState = null;
                 this.lastResult = null;
                 this.stopTimer();
                 Store.set(Store.keys.currentUser, null);
@@ -412,6 +495,7 @@
                 return { shuffled, mapping };
             },
 
+            // --- PILIHAN GANDA ---
             startExam(settings) {
                 const allQuestions = Store.get(Store.keys.questions) || [];
                 const usage = Store.get(Store.keys.questionUsage) || {};
@@ -449,18 +533,37 @@
                 };
 
                 this.setView('exam');
-                this.startTimer();
+                this.startTimer('exam');
             },
 
-            startTimer() {
+            // --- STUDI KASUS ---
+            startCaseExam(settings) {
+                this.caseState = {
+                    currentStep: 1,
+                    answers: ['', '', '', ''],
+                    startTime: Date.now(),
+                    duration: settings.duration * 60,
+                    timeRemaining: settings.duration * 60,
+                    submitted: false
+                };
+                this.setView('caseExam');
+                this.startTimer('case');
+            },
+
+            startTimer(type) {
                 this.stopTimer();
                 this.timerInterval = setInterval(() => {
-                    if (this.examState && !this.examState.submitted) {
-                        this.examState.timeRemaining--;
-                        if (this.examState.timeRemaining <= 0) {
-                            this.submitExam(true);
+                    const state = type === 'exam' ? this.examState : this.caseState;
+                    if (state && !state.submitted) {
+                        state.timeRemaining--;
+                        if (state.timeRemaining <= 0) {
+                            if (type === 'exam') {
+                                this.submitExam(true);
+                            } else {
+                                this.submitCaseExam(true);
+                            }
                         } else {
-                            App.updateTimer();
+                            App.updateTimer(type);
                         }
                     }
                 }, 1000);
@@ -473,6 +576,7 @@
                 }
             },
 
+            // --- PG Handlers ---
             setAnswer(questionId, answer) {
                 if (this.examState && !this.examState.submitted) {
                     this.examState.answers[questionId] = answer;
@@ -548,6 +652,7 @@
 
                 const result = {
                     id: 'r' + Date.now(),
+                    type: 'pg',
                     userId: this.currentUser.id,
                     userName: this.currentUser.name,
                     date: new Date().toISOString(),
@@ -572,6 +677,74 @@
 
                 this.lastResult = result;
                 this.setView('review');
+            },
+
+            // --- STUDI KASUS Handlers ---
+            setCaseAnswer(stepIndex, value) {
+                if (this.caseState && !this.caseState.submitted) {
+                    this.caseState.answers[stepIndex] = value;
+                }
+            },
+
+            nextCaseStep() {
+                if (this.caseState && this.caseState.currentStep < 4) {
+                    this.caseState.currentStep++;
+                    App.renderCaseExam();
+                }
+            },
+
+            prevCaseStep() {
+                if (this.caseState && this.caseState.currentStep > 1) {
+                    this.caseState.currentStep--;
+                    App.renderCaseExam();
+                }
+            },
+
+            goToCaseStep(step) {
+                if (this.caseState) {
+                    this.caseState.currentStep = step;
+                    App.renderCaseExam();
+                }
+            },
+
+            countWords(text) {
+                const trimmed = text.trim();
+                return trimmed === '' ? 0 : trimmed.split(/\s+/).length;
+            },
+
+            submitCaseExam(auto = false) {
+                if (!this.caseState || this.caseState.submitted) return;
+
+                this.stopTimer();
+                this.caseState.submitted = true;
+
+                const elapsedTime = this.caseState.duration - this.caseState.timeRemaining;
+                const totalWords = this.caseState.answers.reduce((sum, a) => sum + this.countWords(a), 0);
+
+                const result = {
+                    id: 'case_' + Date.now(),
+                    type: 'case',
+                    userId: this.currentUser.id,
+                    userName: this.currentUser.name,
+                    date: new Date().toISOString(),
+                    duration: this.caseState.duration,
+                    elapsedTime: elapsedTime,
+                    totalWords: totalWords,
+                    answers: this.caseState.answers.map((a, i) => ({
+                        section: i + 1,
+                        title: ['Permasalahan yang dihadapi', 'Upaya penyelesaian', 'Hasil upaya', 'Pengalaman berharga'][i],
+                        content: a,
+                        wordCount: this.countWords(a)
+                    }))
+                };
+
+                let results = Store.get(Store.keys.caseResults) || [];
+                results.unshift(result);
+                if (results.length > 20) results = results.slice(0, 20);
+                Store.set(Store.keys.caseResults, results);
+
+                App.toast('Jawaban studi kasus berhasil disimpan');
+                this.setView('dashboard');
             },
 
             init() {
@@ -609,10 +782,10 @@
                 }, 3000);
             },
 
-            showModal(content) {
+            showModal(content, wide = false) {
                 this.modalContainer.innerHTML = `
                     <div class="modal-overlay active" onclick="Modal.close(event)">
-                        <div class="modal-content p-6" onclick="event.stopPropagation()">
+                        <div class="modal-content ${wide ? 'modal-wide' : ''} p-6" onclick="event.stopPropagation()">
                             ${content}
                         </div>
                     </div>
@@ -634,6 +807,7 @@
                     exam: () => this.renderExam(),
                     review: () => this.renderReview(),
                     history: () => this.renderHistory(),
+                    caseExam: () => this.renderCaseExam(),
                     admin: () => this.renderAdmin()
                 };
                 (views[State.currentView] || views.login)();
@@ -645,10 +819,12 @@
                 return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             },
 
-            updateTimer() {
+            updateTimer(type) {
                 const timerEl = document.getElementById('timer');
-                if (!timerEl || !State.examState) return;
-                const time = State.examState.timeRemaining;
+                if (!timerEl) return;
+                const state = type === 'exam' ? State.examState : State.caseState;
+                if (!state) return;
+                const time = state.timeRemaining;
                 timerEl.textContent = this.formatTime(time);
                 timerEl.className = 'text-lg font-bold ' + (time <= 60 ? 'timer-danger' : time <= 300 ? 'timer-warning' : 'timer-normal');
             },
@@ -732,6 +908,83 @@
                 }
             },
 
+            // --- RENDER CASE EXAM ---
+            renderCaseExam() {
+                const cs = State.caseState;
+                if (!cs) return;
+
+                const stepLabels = ['Permasalahan yang dihadapi', 'Upaya penyelesaian', 'Hasil upaya', 'Pengalaman berharga'];
+                const stepPlaceholders = [
+                    'Jelaskan permasalahan yang Anda temui dalam pengalaman mengajar...',
+                    'Uraikan upaya atau langkah-langkah yang Anda lakukan untuk mengatasi permasalahan tersebut...',
+                    'Jelaskan hasil yang Anda peroleh setelah melakukan upaya penyelesaian tersebut...',
+                    'Refleksikan pengalaman berharga yang dapat Anda ambil dari studi kasus ini...'
+                ];
+
+                const currentAnswer = cs.answers[cs.currentStep - 1];
+                const wordCount = State.countWords(currentAnswer);
+                const isLastStep = cs.currentStep === 4;
+
+                this.app.innerHTML = `
+                    <div class="min-h-screen flex flex-col">
+                        <header class="card rounded-none border-x-0 border-t-0 px-4 py-3">
+                            <div class="max-w-4xl mx-auto flex items-center justify-between flex-wrap gap-3">
+                                <div>
+                                    <p class="text-sm font-medium" style="color: var(--accent-primary)">Studi Kasus</p>
+                                    <p class="text-xs" style="color: var(--text-muted)">Section ${cs.currentStep} dari 4</p>
+                                </div>
+                                <div id="timer" class="text-lg font-bold timer-normal">${this.formatTime(cs.timeRemaining)}</div>
+                                <div class="flex items-center gap-2">
+                                    ${stepLabels.map((_, i) => `
+                                        <div class="step-item ${cs.currentStep === i + 1 ? 'active' : State.countWords(cs.answers[i]) > 0 ? 'filled' : ''}" 
+                                             onclick="State.goToCaseStep(${i + 1})">${i + 1}</div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </header>
+                        <main class="flex-1 max-w-4xl mx-auto w-full p-4">
+                            <div class="card p-5 md:p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-semibold text-white" 
+                                         style="background: var(--accent-primary)">${cs.currentStep}</div>
+                                    <div>
+                                        <h3 class="font-semibold" style="color: var(--text-primary)">${stepLabels[cs.currentStep - 1]}</h3>
+                                        <p class="text-xs" style="color: var(--text-muted)">Maksimal 500 kata per section</p>
+                                    </div>
+                                </div>
+                                <textarea 
+                                    id="case-answer" 
+                                    class="textarea-case" 
+                                    placeholder="${stepPlaceholders[cs.currentStep - 1]}"
+                                    oninput="CaseStudy.handleInput(this.value)"
+                                >${currentAnswer}</textarea>
+                                <div class="flex items-center justify-between mt-3">
+                                    <span id="word-count" class="text-sm ${wordCount > 500 ? 'timer-danger' : wordCount > 400 ? 'timer-warning' : ''}" 
+                                          style="color: ${wordCount > 500 ? 'var(--error)' : wordCount > 400 ? 'var(--warning)' : 'var(--text-muted)'}">
+                                        ${wordCount} kata
+                                    </span>
+                                    ${wordCount > 500 ? '<span class="badge badge-error">Melebihi batas</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-4">
+                                <button onclick="State.prevCaseStep()" class="btn-secondary flex-1" ${cs.currentStep === 1 ? 'disabled style="opacity:0.5"' : ''}>
+                                    Sebelumnya
+                                </button>
+                                ${isLastStep ? `
+                                    <button onclick="CaseStudy.confirmSubmit()" class="btn-finish flex-1">
+                                        Selesai
+                                    </button>
+                                ` : `
+                                    <button onclick="State.nextCaseStep()" class="btn-primary flex-1">
+                                        Selanjutnya
+                                    </button>
+                                `}
+                            </div>
+                        </main>
+                    </div>
+                `;
+            },
+
             renderLogin() {
                 this.app.innerHTML = `
                     <div class="min-h-screen flex items-center justify-center p-4">
@@ -752,7 +1005,6 @@
                                 <button type="submit" class="btn-primary w-full mt-6">Masuk sebagai Peserta</button>
                             </form>
                             <div class="mt-6 pt-6 border-t text-center" style="border-color: var(--border-color)">
-                                <!--<p class="text-xs mb-2" style="color: var(--text-muted)">Demo: peserta / peserta123</p>-->
                                 <button onclick="Login.showAdmin()" class="text-xs hover:underline" style="color: var(--text-muted)">Login sebagai Admin</button>
                             </div>
                         </div>
@@ -762,14 +1014,15 @@
 
             renderDashboard() {
                 const user = State.currentUser;
-                const results = (Store.get(Store.keys.results) || []).filter(r => r.userId === user.id);
+                const pgResults = (Store.get(Store.keys.results) || []).filter(r => r.userId === user.id);
+                const caseResults = (Store.get(Store.keys.caseResults) || []).filter(r => r.userId === user.id);
                 const settings = Store.get(Store.keys.settings) || { defaultDuration: 60, defaultQuestionCount: 20 };
                 const totalQuestions = (Store.get(Store.keys.questions) || []).length;
 
                 this.app.innerHTML = `
                     <div class="min-h-screen">
                         <header class="card rounded-none border-x-0 border-t-0 px-4 md:px-6 py-4">
-                            <div class="max-w-5xl mx-auto flex items-center justify-between">
+                            <div class="max-w-6xl mx-auto flex items-center justify-between">
                                 <div>
                                     <h1 class="text-xl font-bold" style="color: var(--accent-primary)">UP PPG</h1>
                                     <p class="text-sm" style="color: var(--text-secondary)">Latihan CBT</p>
@@ -780,44 +1033,65 @@
                                 </div>
                             </div>
                         </header>
-                        <main class="max-w-5xl mx-auto p-4 md:p-6">
-                            <div class="grid sm:grid-cols-3 gap-4 mb-6">
-                                <div class="card p-5">
-                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Bank Soal</p>
-                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${totalQuestions}</p>
-                                </div>
-                                <div class="card p-5">
-                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Latihan Selesai</p>
-                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length}</p>
-                                </div>
-                                <div class="card p-5">
-                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Rata-rata Nilai</p>
-                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length > 0 ? Math.round(results.reduce((a, b) => a + b.score, 0) / results.length) : 0}</p>
-                                </div>
-                            </div>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div class="card p-6">
-                                    <h2 class="font-semibold mb-4" style="color: var(--text-primary)">Mulai Latihan Baru</h2>
-                                    <button onclick="Dashboard.showSettings()" class="btn-primary w-full">Mulai Latihan</button>
-                                </div>
-                                <div class="card p-6">
-                                    <h2 class="font-semibold mb-4" style="color: var(--text-primary)">Riwayat Latihan</h2>
-                                    ${results.length > 0 ? `
-                                        <div class="space-y-3 mb-4">
-                                            ${results.slice(0, 3).map(r => `
-                                                <div class="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:opacity-80" style="background: var(--accent-lighter)" onclick="History.view('${r.id}')">
-                                                    <div>
-                                                        <p class="text-sm font-medium">${new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                                                        <p class="text-xs" style="color: var(--text-muted)">${r.questionCount} soal</p>
+                        <main class="max-w-6xl mx-auto p-4 md:p-6">
+                            <div class="grid lg:grid-cols-2 gap-6">
+                                <!-- KOLOM KIRI: PILIHAN GANDA -->
+                                <div class="space-y-6">
+                                    <div class="card p-5">
+                                        <h2 class="font-semibold text-lg mb-1" style="color: var(--text-primary)">Pilihan Ganda</h2>
+                                        <p class="text-sm mb-4" style="color: var(--text-muted)">Bank soal: ${totalQuestions}</p>
+                                        <button onclick="Dashboard.showSettings('pg')" class="btn-primary w-full">Mulai Latihan PG</button>
+                                    </div>
+                                    <div class="card p-5">
+                                        <h3 class="font-semibold mb-4" style="color: var(--text-primary)">Riwayat Pilihan Ganda</h3>
+                                        ${pgResults.length > 0 ? `
+                                            <div class="space-y-3 mb-4">
+                                                ${pgResults.slice(0, 3).map(r => `
+                                                    <div class="history-item" onclick="History.viewPG('${r.id}')">
+                                                        <div class="flex items-center justify-between">
+                                                            <div>
+                                                                <p class="text-sm font-medium">${new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                                                <p class="text-xs" style="color: var(--text-muted)">${r.questionCount} soal</p>
+                                                            </div>
+                                                            <div class="text-right">
+                                                                <p class="font-bold" style="color: ${r.score >= 70 ? 'var(--accent-primary)' : 'var(--error)'}">${r.score}</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="text-right">
-                                                        <p class="font-bold" style="color: ${r.score >= 70 ? 'var(--accent-primary)' : 'var(--error)'}">${r.score}</p>
+                                                `).join('')}
+                                            </div>
+                                            <button onclick="State.setView('history')" class="btn-secondary w-full text-sm">Lihat Semua</button>
+                                        ` : `<p class="text-sm text-center py-4" style="color: var(--text-muted)">Belum ada riwayat</p>`}
+                                    </div>
+                                </div>
+                                <!-- KOLOM KANAN: STUDI KASUS -->
+                                <div class="space-y-6">
+                                    <div class="card p-5">
+                                        <h2 class="font-semibold text-lg mb-1" style="color: var(--text-primary)">Studi Kasus</h2>
+                                        <p class="text-sm mb-4" style="color: var(--text-muted)">Uraian 4 section (maks 500 kata/section)</p>
+                                        <button onclick="Dashboard.showSettings('case')" class="btn-primary w-full">Mulai Latihan Studi Kasus</button>
+                                    </div>
+                                    <div class="card p-5">
+                                        <h3 class="font-semibold mb-4" style="color: var(--text-primary)">Riwayat Studi Kasus</h3>
+                                        ${caseResults.length > 0 ? `
+                                            <div class="space-y-3 mb-4">
+                                                ${caseResults.slice(0, 3).map(r => `
+                                                    <div class="history-item" onclick="History.viewCase('${r.id}')">
+                                                        <div class="flex items-center justify-between">
+                                                            <div>
+                                                                <p class="text-sm font-medium">${new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                                                <p class="text-xs" style="color: var(--text-muted)">${r.totalWords} kata - ${this.formatTime(r.elapsedTime)}</p>
+                                                            </div>
+                                                            <div class="text-right">
+                                                                <p class="font-bold" style="color: var(--accent-primary)">${r.answers.filter(a => a.wordCount > 0).length}/4</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                        <button onclick="State.setView('history')" class="btn-secondary w-full text-sm">Lihat Semua</button>
-                                    ` : `<p class="text-sm text-center py-4" style="color: var(--text-muted)">Belum ada riwayat</p>`}
+                                                `).join('')}
+                                            </div>
+                                            <button onclick="History.showAllCase()" class="btn-secondary w-full text-sm">Lihat Semua</button>
+                                        ` : `<p class="text-sm text-center py-4" style="color: var(--text-muted)">Belum ada riwayat</p>`}
+                                    </div>
                                 </div>
                             </div>
                         </main>
@@ -997,7 +1271,7 @@
                             
                             <div class="mt-6 flex gap-4">
                                 <button onclick="State.setView('dashboard')" class="btn-secondary flex-1">Kembali ke Dashboard</button>
-                                <button onclick="Dashboard.showSettings()" class="btn-primary flex-1">Latihan Lagi</button>
+                                <button onclick="Dashboard.showSettings('pg')" class="btn-primary flex-1">Latihan Lagi</button>
                             </div>
                         </main>
                     </div>
@@ -1020,7 +1294,7 @@
                             ${results.length > 0 ? `
                                 <div class="space-y-3">
                                     ${results.map((r, i) => `
-                                        <div class="card p-4 cursor-pointer hover:border-[var(--accent-primary)] transition-colors" onclick="History.view('${r.id}')">
+                                        <div class="history-item" onclick="History.viewPG('${r.id}')">
                                             <div class="flex items-center justify-between">
                                                 <div>
                                                     <p class="font-medium" style="color: var(--text-primary)">Latihan #${results.length - i}</p>
@@ -1049,6 +1323,7 @@
                 const questions = Store.get(Store.keys.questions) || [];
                 const settings = Store.get(Store.keys.settings) || { defaultDuration: 60, defaultQuestionCount: 20 };
                 const results = Store.get(Store.keys.results) || [];
+                const caseResults = Store.get(Store.keys.caseResults) || [];
                 const users = Store.get(Store.keys.users) || [];
 
                 this.app.innerHTML = `
@@ -1073,12 +1348,12 @@
                                     <p class="text-2xl font-bold" style="color: var(--accent-primary)">${users.filter(u => u.role === 'peserta').length}</p>
                                 </div>
                                 <div class="card p-5">
-                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Total Ujian</p>
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Latihan PG</p>
                                     <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length}</p>
                                 </div>
                                 <div class="card p-5">
-                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Rata-rata</p>
-                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${results.length > 0 ? Math.round(results.reduce((a, b) => a + b.score, 0) / results.length) : 0}</p>
+                                    <p class="text-sm mb-1" style="color: var(--text-muted)">Studi Kasus</p>
+                                    <p class="text-2xl font-bold" style="color: var(--accent-primary)">${caseResults.length}</p>
                                 </div>
                             </div>
                             <div class="grid lg:grid-cols-3 gap-6">
@@ -1099,8 +1374,7 @@
                                             <button onclick="Admin.deleteSelected()" id="delete-btn" class="text-sm px-3 py-1 rounded hidden" style="color: var(--error); background: var(--error-bg)">Hapus Terpilih</button>
                                         </div>
                                         
-                                        <!-- Updated: Removed slice(0, 10) to show ALL questions -->
-                                        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                                        <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
                                             ${questions.map(q => `
                                                 <div class="admin-question-item">
                                                     <input type="checkbox" class="q-cb mt-1 w-4 h-4 accent-[var(--accent-primary)]" data-id="${q.id}" onchange="Admin.updateBtn()">
@@ -1127,6 +1401,30 @@
                                             ` : ''}
                                         </div>
                                     </div>
+                                    
+                                    <!-- RIWAYAT STUDI KASUS DI ADMIN -->
+                                    <div class="card p-5 mt-6">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h2 class="font-semibold" style="color: var(--text-primary)">Riwayat Studi Kasus (${caseResults.length})</h2>
+                                            ${caseResults.length > 0 ? `<button onclick="Admin.clearCaseHistory()" class="btn-danger-sm">Hapus Semua</button>` : ''}
+                                        </div>
+                                        <div class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                                            ${caseResults.map(r => `
+                                                <div class="history-item" onclick="Admin.viewCaseDetail('${r.id}')">
+                                                    <div class="flex items-center justify-between">
+                                                        <div>
+                                                            <p class="font-medium text-sm">${r.userName}</p>
+                                                            <p class="text-xs" style="color: var(--text-muted)">${new Date(r.date).toLocaleDateString('id-ID')}</p>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <p class="font-semibold" style="color: var(--accent-primary)">${r.totalWords} kata</p>
+                                                            <p class="text-xs" style="color: var(--text-muted)">${this.formatTime(r.elapsedTime)}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `).join('') || '<p class="text-sm text-center py-4" style="color: var(--text-muted)">Belum ada riwayat</p>'}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="space-y-6">
                                     <div class="card p-5">
@@ -1147,7 +1445,7 @@
                                         <h2 class="font-semibold mb-4" style="color: var(--text-primary)">Data</h2>
                                         <div class="space-y-3">
                                             <button onclick="Admin.exportData()" class="btn-secondary w-full text-sm">Export JSON</button>
-                                            <button onclick="Admin.clearHistory()" class="btn-secondary w-full text-sm" style="color: var(--error)">Hapus Riwayat</button>
+                                            <button onclick="Admin.clearHistory()" class="btn-secondary w-full text-sm" style="color: var(--error)">Hapus Riwayat PG</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1187,7 +1485,6 @@
                             <button type="submit" class="btn-primary flex-1">Masuk</button>
                         </div>
                     </form>
-                    <!--<p class="text-xs text-center mt-4" style="color: var(--text-muted)">Demo: admin / admin123</p>-->
                 `);
             },
             adminLogin(e) {
@@ -1201,22 +1498,25 @@
         };
 
         const Dashboard = {
-            showSettings() {
+            showSettings(type) {
                 const settings = Store.get(Store.keys.settings) || { defaultDuration: 60, defaultQuestionCount: 20 };
                 const totalQuestions = (Store.get(Store.keys.questions) || []).length;
+                const title = type === 'pg' ? 'Pengaturan Latihan PG' : 'Pengaturan Studi Kasus';
 
                 App.showModal(`
-                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">Pengaturan Ujian</h3>
-                    <form onsubmit="Dashboard.start(event)" class="space-y-4">
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">${title}</h3>
+                    <form onsubmit="Dashboard.start(event, '${type}')" class="space-y-4">
                         <div>
                             <label class="block text-sm mb-2" style="color: var(--text-secondary)">Durasi (menit)</label>
                             <input type="number" id="exam-duration" class="input-field" value="${settings.defaultDuration}" min="5" max="180" required>
                         </div>
-                        <div>
-                            <label class="block text-sm mb-2" style="color: var(--text-secondary)">Jumlah Soal</label>
-                            <input type="number" id="exam-count" class="input-field" value="${Math.min(settings.defaultQuestionCount, totalQuestions)}" min="5" max="${totalQuestions}" required>
-                            <p class="text-xs mt-1" style="color: var(--text-muted)">Tersedia ${totalQuestions} soal</p>
-                        </div>
+                        ${type === 'pg' ? `
+                            <div>
+                                <label class="block text-sm mb-2" style="color: var(--text-secondary)">Jumlah Soal</label>
+                                <input type="number" id="exam-count" class="input-field" value="${Math.min(settings.defaultQuestionCount, totalQuestions)}" min="5" max="${totalQuestions}" required>
+                                <p class="text-xs mt-1" style="color: var(--text-muted)">Tersedia ${totalQuestions} soal</p>
+                            </div>
+                        ` : ''}
                         <div class="flex gap-3 pt-2">
                             <button type="button" onclick="App.closeModal()" class="btn-secondary flex-1">Batal</button>
                             <button type="submit" class="btn-primary flex-1">Mulai</button>
@@ -1224,12 +1524,16 @@
                     </form>
                 `);
             },
-            start(e) {
+            start(e, type) {
                 e.preventDefault();
                 const duration = parseInt(document.getElementById('exam-duration').value);
-                const questionCount = parseInt(document.getElementById('exam-count').value);
                 App.closeModal();
-                State.startExam({ duration, questionCount });
+                if (type === 'pg') {
+                    const questionCount = parseInt(document.getElementById('exam-count').value);
+                    State.startExam({ duration, questionCount });
+                } else {
+                    State.startCaseExam({ duration });
+                }
             }
         };
 
@@ -1264,11 +1568,106 @@
             submit() { App.closeModal(); State.submitExam(false); }
         };
 
+        const CaseStudy = {
+            handleInput(value) {
+                State.setCaseAnswer(State.caseState.currentStep - 1, value);
+                const wc = State.countWords(value);
+                const wcEl = document.getElementById('word-count');
+                if (wcEl) {
+                    wcEl.textContent = `${wc} kata`;
+                    wcEl.style.color = wc > 500 ? 'var(--error)' : wc > 400 ? 'var(--warning)' : 'var(--text-muted)';
+                }
+            },
+            confirmSubmit() {
+                const cs = State.caseState;
+                if (!cs) return;
+                const totalWords = cs.answers.reduce((sum, a) => sum + State.countWords(a), 0);
+                const filled = cs.answers.filter(a => State.countWords(a) > 0).length;
+
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">Selesaikan Studi Kasus?</h3>
+                    <div class="p-4 rounded-lg mb-4" style="background: var(--accent-lighter)">
+                        <p class="text-sm mb-2">Section diisi: <strong>${filled}/4</strong></p>
+                        <p class="text-sm mb-2">Total kata: <strong>${totalWords}</strong></p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="App.closeModal()" class="btn-secondary flex-1">Kembali</button>
+                        <button onclick="CaseStudy.submit()" class="btn-finish flex-1">Selesai</button>
+                    </div>
+                `);
+            },
+            submit() { App.closeModal(); State.submitCaseExam(false); }
+        };
+
         const History = {
-            view(resultId) {
+            viewPG(resultId) {
                 const results = Store.get(Store.keys.results) || [];
                 const result = results.find(r => r.id === resultId);
                 if (result) { State.lastResult = result; State.setView('review'); }
+            },
+            viewCase(resultId) {
+                const results = Store.get(Store.keys.caseResults) || [];
+                const result = results.find(r => r.id === resultId);
+                if (result) { History.showCaseModal(result); }
+            },
+            showAllCase() {
+                const user = State.currentUser;
+                const results = (Store.get(Store.keys.caseResults) || []).filter(r => r.userId === user.id);
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">Riwayat Studi Kasus</h3>
+                    <div class="space-y-3 max-h-[400px] overflow-y-auto">
+                        ${results.map(r => `
+                            <div class="history-item" onclick="History.viewCase('${r.id}')">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium">${new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                        <p class="text-xs" style="color: var(--text-muted)">${r.totalWords} kata - ${App.formatTime(r.elapsedTime)}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold" style="color: var(--accent-primary)">${r.answers.filter(a => a.wordCount > 0).length}/4</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-sm text-center py-4" style="color: var(--text-muted)">Belum ada riwayat</p>'}
+                    </div>
+                `, true);
+            },
+            showCaseModal(r) {
+                App.showModal(`
+                    <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary)">Detail Studi Kasus</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="p-3 rounded-lg" style="background: var(--accent-lighter)">
+                            <p class="text-xs" style="color: var(--text-muted)">Tanggal</p>
+                            <p class="text-sm font-medium">${new Date(r.date).toLocaleDateString('id-ID')}</p>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: var(--accent-lighter)">
+                            <p class="text-xs" style="color: var(--text-muted)">Waktu Tempuh</p>
+                            <p class="text-sm font-medium">${App.formatTime(r.elapsedTime)}</p>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: var(--accent-lighter)">
+                            <p class="text-xs" style="color: var(--text-muted)">Total Kata</p>
+                            <p class="text-sm font-medium">${r.totalWords}</p>
+                        </div>
+                        <div class="p-3 rounded-lg" style="background: var(--accent-lighter)">
+                            <p class="text-xs" style="color: var(--text-muted)">Section</p>
+                            <p class="text-sm font-medium">${r.answers.filter(a => a.wordCount > 0).length}/4</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        ${r.answers.map(a => `
+                            <div class="p-4 rounded-lg border" style="border-color: var(--border-color)">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-semibold">${a.section}. ${a.title}</span>
+                                    <span class="badge badge-category">${a.wordCount} kata</span>
+                                </div>
+                                <p class="text-sm whitespace-pre-wrap" style="color: var(--text-secondary)">${a.content || '<em style="color: var(--text-muted)">Tidak diisi</em>'}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="App.closeModal()" class="btn-secondary w-full">Tutup</button>
+                    </div>
+                `, true);
             }
         };
 
@@ -1306,7 +1705,7 @@
                             <button type="submit" class="btn-primary flex-1">${isEdit ? 'Simpan' : 'Tambah'}</button>
                         </div>
                     </form>
-                `);
+                `, true);
             },
             save(e, editId) {
                 e.preventDefault();
@@ -1332,7 +1731,7 @@
             showImport() {
                 App.showModal(`
                     <h3 class="text-lg font-semibold mb-2" style="color: var(--text-primary)">Import Soal</h3>
-                    <p class="text-sm mb-4" style="color: var(--text-muted)">Format: Kategori | Soal | A | B | C | D | E | Jawaban. Pisahkan soal dengan baris kosong.</p>
+                    <p class="text-sm mb-4" style="color: var(--text-muted)">Format: Kategori | Soal | A | B | C | D | E | Jawaban. Pisahkan soal dengan baris baru.</p>
                     <form onsubmit="Admin.import(event)" class="space-y-4">
                         <textarea id="import-text" class="input-field" rows="8" placeholder="Pedagogik | Apa itu... | Opsi A | Opsi B | Opsi C | Opsi D | Opsi E | B" required></textarea>
                         <div class="flex gap-3">
@@ -1340,12 +1739,12 @@
                             <button type="submit" class="btn-primary flex-1">Import</button>
                         </div>
                     </form>
-                `);
+                `, true);
             },
             import(e) {
                 e.preventDefault();
                 const text = document.getElementById('import-text').value;
-                const blocks = text.split(/\n\s*\n/).filter(b => b.trim());
+                const blocks = text.split('\n').filter(b => b.trim());
                 const questions = Store.get(Store.keys.questions) || [];
                 let imported = 0;
                 blocks.forEach(block => {
@@ -1364,8 +1763,14 @@
                 App.render();
             },
             saveSettings() { const duration = parseInt(document.getElementById('setting-duration').value); const count = parseInt(document.getElementById('setting-count').value); Store.set(Store.keys.settings, { defaultDuration: duration, defaultQuestionCount: count }); App.toast('Pengaturan disimpan'); },
-            exportData() { const data = { users: Store.get(Store.keys.users), questions: Store.get(Store.keys.questions), results: Store.get(Store.keys.results), settings: Store.get(Store.keys.settings), exportedAt: new Date().toISOString() }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `uppg-data-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); App.toast('Data diekspor'); },
-            clearHistory() { if (!confirm('Hapus semua riwayat ujian?')) return; Store.set(Store.keys.results, []); Store.set(Store.keys.questionUsage, {}); App.toast('Riwayat dihapus'); App.render(); }
+            exportData() { const data = { users: Store.get(Store.keys.users), questions: Store.get(Store.keys.questions), results: Store.get(Store.keys.results), caseResults: Store.get(Store.keys.caseResults), settings: Store.get(Store.keys.settings), exportedAt: new Date().toISOString() }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `uppg-data-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); App.toast('Data diekspor'); },
+            clearHistory() { if (!confirm('Hapus semua riwayat ujian PG?')) return; Store.set(Store.keys.results, []); Store.set(Store.keys.questionUsage, {}); App.toast('Riwayat PG dihapus'); App.render(); },
+            clearCaseHistory() { if (!confirm('Hapus semua riwayat Studi Kasus?')) return; Store.set(Store.keys.caseResults, []); App.toast('Riwayat Studi Kasus dihapus'); App.render(); },
+            viewCaseDetail(resultId) {
+                const results = Store.get(Store.keys.caseResults) || [];
+                const result = results.find(r => r.id === resultId);
+                if (result) History.showCaseModal(result);
+            }
         };
 
         const Modal = { close(e) { if (e.target.classList.contains('modal-overlay')) App.closeModal(); } };
